@@ -1,0 +1,75 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Experiencias{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">{% if request.session.rol == 'admin' %}Gestión de Rutas/Actividades{% else %}Mis Tours Asignados{% endif %}</h1>
+    <a href="{% url 'experiencia_registro' %}" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Nueva experiencia</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered tabla" width="100%">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Categoría</th>
+                        {% if request.session.rol == 'admin' %}<th>Guía</th>{% endif %}
+                        <th>Fecha y hora</th>
+                        <th>Precio</th>
+                        <th>Cupos</th>
+                        <th>Estado</th>
+                        <th class="sin-orden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in experiencias %}
+                    <tr>
+                        <td>{{ e.titulo }}</td>
+                        <td>{{ e.categoria.nombre }}</td>
+                        {% if request.session.rol == 'admin' %}<td>{{ e.creador.username }}</td>{% endif %}
+                        <td data-order="{{ e.fecha_hora|date:'Y-m-d H:i' }}">{{ e.fecha_hora|date:"d/m/Y H:i" }}</td>
+                        <td>${{ e.precio|intcomma }}</td>
+                        <td>{{ e.cupos_ocupados }} / {{ e.cupo_maximo }}</td>
+                        <td>{% if e.activa %}<span class="badge badge-success">Activa</span>{% else %}<span class="badge badge-secondary">Inactiva</span>{% endif %}</td>
+                        <td>
+                            <a href="{% url 'grupo_detalle' e.id %}" class="btn btn-sm btn-info"><i class="fas fa-users"></i></a>
+                            <a href="{% url 'experiencia_editar' e.id %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                            <form method="post" action="{% url 'experiencia_estado' e.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-secondary" title="Activar o desactivar"><i class="fas fa-toggle-on"></i></button>
+                            </form>
+                            {% if request.session.rol == 'admin' %}
+                            <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal{{ e.id }}"><i class="fas fa-trash"></i></a>
+
+                            <div class="modal fade" id="modal{{ e.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmación</h5>
+                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">¿Estás seguro de eliminar la experiencia {{ e.titulo }}? Se eliminarán también sus reservas.</div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <form method="post" action="{% url 'experiencia_eliminar' e.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Aventuras del Sur{% endblock %}</title>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/estilo.css' %}" rel="stylesheet">
+</head>
+
+<body class="fondo-login">
+
+    <div class="login-caja">
+        <div class="login-lado">
+            <div>
+                <span class="marca-icono"><i class="fas fa-mountain"></i></span>
+                <h2 class="mt-4">Vive la naturaleza con nosotros</h2>
+                <p>Reserva experiencias de trekking, canopy y kayak en el Ecoparque Aventuras del Sur.</p>
+            </div>
+            <svg viewBox="0 0 400 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <polygon points="0,120 0,70 70,20 130,75 190,35 260,90 320,40 400,85 400,120" fill="#ffffff"/>
+            </svg>
+        </div>
+        <div class="login-form">
+            {% block contenido %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+
+</html>

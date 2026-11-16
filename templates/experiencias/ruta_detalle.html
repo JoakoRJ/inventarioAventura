@@ -1,0 +1,40 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Elegir Ruta{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Elegir Ruta</h1>
+    <a href="{% url 'catalogo' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver al catálogo</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <span class="badge badge-success mr-2">{{ experiencia.categoria.nombre }}</span>
+        <h5 class="d-inline font-weight-bold text-gray-900">{{ experiencia.titulo }}</h5>
+    </div>
+    <div class="card-body">
+        <p>{{ experiencia.descripcion }}</p>
+        <ul class="list-unstyled small">
+            <li><i class="fas fa-calendar-alt fa-fw text-success"></i> {{ experiencia.fecha_hora|date:"d/m/Y H:i" }} hrs</li>
+            <li><i class="fas fa-dollar-sign fa-fw text-success"></i> ${{ experiencia.precio|intcomma }} por persona</li>
+            <li><i class="fas fa-users fa-fw text-success"></i> {{ experiencia.cupos_disponibles }} cupos disponibles de {{ experiencia.cupo_maximo }}</li>
+            <li><i class="fas fa-user fa-fw text-success"></i> Guía: {{ experiencia.creador.get_full_name|default:experiencia.creador.username }}</li>
+        </ul>
+
+        {% if reserva %}
+        <div class="alert alert-info mb-0">
+            Ya tienes una reserva para esta experiencia ({{ reserva.get_estado_pago_display }}).
+            <a href="{% url 'reserva_detalle' reserva.id %}" class="alert-link">Ver detalle del evento</a>
+        </div>
+        {% elif experiencia.ya_ocurrio %}
+        <div class="alert alert-secondary mb-0">Esta experiencia ya se realizó.</div>
+        {% elif experiencia.esta_llena %}
+        <div class="alert alert-danger mb-0">No quedan cupos disponibles.</div>
+        {% else %}
+        <a href="{% url 'reserva_nueva' experiencia.id %}" class="btn btn-success"><i class="fas fa-shopping-cart"></i> Reservar ticket</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

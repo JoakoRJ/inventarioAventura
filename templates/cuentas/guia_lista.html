@@ -1,0 +1,43 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Gestión de Guías{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Gestión de Guías</h1>
+    <a href="{% url 'usuario_registro' %}" class="btn btn-success btn-sm"><i class="fas fa-user-plus"></i> Nuevo guía</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered tabla" width="100%">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Experiencias</th>
+                        <th>Reservas</th>
+                        <th class="sin-orden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for g in guias %}
+                    <tr>
+                        <td>{{ g.username }}</td>
+                        <td>{{ g.get_full_name }}</td>
+                        <td>{{ g.email }}</td>
+                        <td>{{ g.perfil.telefono }}</td>
+                        <td>{{ g.num_experiencias }}</td>
+                        <td>{{ g.num_reservas }}</td>
+                        <td><a href="{% url 'usuario_editar' g.id %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

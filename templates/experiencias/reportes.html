@@ -1,0 +1,63 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Reportes Globales{% endblock %}
+
+{% block contenido %}
+<h1 class="h3 mb-4 text-gray-800">Reportes Globales</h1>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-info shadow py-2"><div class="card-body">
+            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total de inscritos</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_inscritos }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-success shadow py-2"><div class="card-body">
+            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Ingresos confirmados</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ total_confirmado|intcomma }}</div>
+        </div></div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card border-left-warning shadow py-2"><div class="card-body">
+            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Ingresos pendientes</div>
+            <div class="h5 mb-0 font-weight-bold text-gray-800">${{ total_pendiente|intcomma }}</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Detalle por experiencia</h6></div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered tabla" width="100%">
+                <thead>
+                    <tr>
+                        <th>Experiencia</th>
+                        <th>Categoría</th>
+                        <th>Guía</th>
+                        <th>Cupo</th>
+                        <th>Confirmados</th>
+                        <th>Pendientes</th>
+                        <th>Ingreso confirmado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in filas %}
+                    <tr>
+                        <td>{{ f.experiencia.titulo }}</td>
+                        <td>{{ f.experiencia.categoria.nombre }}</td>
+                        <td>{{ f.experiencia.creador.username }}</td>
+                        <td>{{ f.experiencia.cupo_maximo }}</td>
+                        <td>{{ f.confirmados }}</td>
+                        <td>{{ f.pendientes }}</td>
+                        <td data-order="{{ f.ingreso|stringformat:'d' }}">${{ f.ingreso|intcomma }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

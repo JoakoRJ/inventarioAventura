@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% load static humanize %}
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{ config.nombre }}</title>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/estilo.css' %}" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand navbar-dark barra">
+        <a class="navbar-brand" href="{% url 'inicio' %}">
+            <span class="marca-icono"><i class="fas fa-mountain"></i></span>Aventuras del Sur
+        </a>
+        <ul class="navbar-nav ml-auto align-items-center">
+            {% if user.is_authenticated %}
+            <li class="nav-item mr-2"><a class="btn btn-sm btn-tierra" href="{% url 'redireccion' %}">Ir a mi panel</a></li>
+            <li class="nav-item">
+                <form action="{% url 'logout' %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-borde">Cerrar sesión</button>
+                </form>
+            </li>
+            {% else %}
+            <li class="nav-item mr-2"><a class="btn btn-sm btn-borde" href="{% url 'login' %}">Iniciar sesión</a></li>
+            <li class="nav-item"><a class="btn btn-sm btn-tierra" href="{% url 'registro' %}">Crear cuenta</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <section class="portada">
+        <div class="portada-grid">
+            <div>
+                <span class="etiqueta">Ecoparque y reserva natural</span>
+                <h1>{{ config.nombre }}</h1>
+                <p class="lema">{{ config.lema }}</p>
+                <p class="mb-4">{{ config.descripcion }}</p>
+                {% if user.is_authenticated %}
+                <a href="{% url 'redireccion' %}" class="btn btn-tierra">Ir a mi panel</a>
+                {% else %}
+                <a href="{% url 'registro' %}" class="btn btn-tierra mr-2">Crear cuenta</a>
+                <a href="{% url 'login' %}" class="btn btn-borde">Iniciar sesión</a>
+                {% endif %}
+            </div>
+            <div class="portada-arte">
+                <svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="300" cy="80" r="46" fill="#d9822b"/>
+                    <polygon points="0,320 0,200 90,90 170,210 230,140 320,250 400,180 400,320" fill="#2e7d5b"/>
+                    <polygon points="0,320 0,250 70,190 140,260 220,200 300,280 400,230 400,320" fill="#1f4d3d"/>
+                    <polygon points="60,320 90,250 120,320" fill="#16352b"/>
+                    <polygon points="250,320 285,240 320,320" fill="#16352b"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    {% if categorias %}
+    <section class="seccion">
+        <h2>Nuestras actividades</h2>
+        <div class="row">
+            {% for c in categorias %}
+            <div class="col-md-6 col-lg-3 mb-3">
+                <div class="cat-item">
+                    <i class="fas fa-compass"></i>
+                    <h3>{{ c.nombre }}</h3>
+                    <p>{{ c.descripcion }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="seccion">
+        <h2>Próximas experiencias</h2>
+        <div class="row">
+            {% for e in destacadas %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="exp-card">
+                    <div class="exp-top"></div>
+                    <div class="exp-cuerpo">
+                        <span class="badge badge-success">{{ e.categoria.nombre }}</span>
+                        <h3>{{ e.titulo }}</h3>
+                        <p class="small text-muted">{{ e.descripcion|truncatechars:110 }}</p>
+                        <div class="small text-muted">
+                            <i class="far fa-calendar-alt fa-fw"></i> {{ e.fecha_hora|date:"d/m/Y H:i" }}<br>
+                            <i class="fas fa-users fa-fw"></i> {{ e.cupos_disponibles }} cupos disponibles
+                        </div>
+                    </div>
+                    <div class="exp-pie">
+                        <span class="exp-precio">${{ e.precio|intcomma }}</span>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'redireccion' %}" class="btn btn-sm btn-success">Ver más</a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-sm btn-success">Reservar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12"><p class="text-muted">Pronto publicaremos nuevas experiencias.</p></div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="contacto">
+        <div class="seccion pt-0">
+            <div class="row">
+                <div class="col-md-4 mb-2"><strong>{{ config.nombre }}</strong></div>
+                <div class="col-md-8">
+                    {% if config.direccion %}<div><i class="fas fa-map-marker-alt"></i>{{ config.direccion }}</div>{% endif %}
+                    {% if config.telefono %}<div><i class="fas fa-phone"></i>{{ config.telefono }}</div>{% endif %}
+                    {% if config.correo %}<div><i class="fas fa-envelope"></i>{{ config.correo }}</div>{% endif %}
+                    {% if config.horario %}<div><i class="fas fa-clock"></i>{{ config.horario }}</div>{% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+</body>
+
+</html>

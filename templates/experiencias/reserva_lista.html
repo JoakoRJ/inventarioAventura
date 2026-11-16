@@ -1,0 +1,68 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Reservas{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Reservas</h1>
+    <a href="{% url 'reserva_registro' %}" class="btn btn-success btn-sm"><i class="fas fa-plus"></i> Nueva reserva</a>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered tabla" width="100%">
+                <thead>
+                    <tr>
+                        <th>Fecha de reserva</th>
+                        <th>Turista</th>
+                        <th>Experiencia</th>
+                        <th>Categoría</th>
+                        <th>Fecha del evento</th>
+                        <th>Precio</th>
+                        <th>Estado de pago</th>
+                        <th class="sin-orden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservas %}
+                    <tr>
+                        <td data-order="{{ r.fecha_inscripcion|date:'Y-m-d H:i' }}">{{ r.fecha_inscripcion|date:"d/m/Y H:i" }}</td>
+                        <td>{{ r.usuario.username }}</td>
+                        <td>{{ r.experiencia.titulo }}</td>
+                        <td>{{ r.experiencia.categoria.nombre }}</td>
+                        <td data-order="{{ r.experiencia.fecha_hora|date:'Y-m-d H:i' }}">{{ r.experiencia.fecha_hora|date:"d/m/Y H:i" }}</td>
+                        <td>${{ r.experiencia.precio|intcomma }}</td>
+                        <td><span class="badge {% if r.estado_pago == 'confirmado' %}badge-success{% else %}badge-warning{% endif %}">{{ r.get_estado_pago_display }}</span></td>
+                        <td>
+                            <a href="{% url 'reserva_editar' r.id %}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
+                            <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#modal{{ r.id }}"><i class="fas fa-trash"></i></a>
+
+                            <div class="modal fade" id="modal{{ r.id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Confirmación</h5>
+                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                        </div>
+                                        <div class="modal-body">¿Estás seguro de eliminar la reserva de {{ r.usuario.username }} en {{ r.experiencia.titulo }}?</div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                            <form method="post" action="{% url 'reserva_eliminar' r.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Eliminar</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

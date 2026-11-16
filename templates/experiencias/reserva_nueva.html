@@ -1,0 +1,41 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Reservar Ticket{% endblock %}
+
+{% block contenido %}
+<h1 class="h3 mb-4 text-gray-800">Reservar Ticket</h1>
+
+<div class="row">
+    <div class="col-xl-7 col-lg-9">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Resumen de tu reserva</h6></div>
+            <div class="card-body">
+                <h5 class="font-weight-bold text-gray-900">{{ experiencia.titulo }}</h5>
+                <table class="table table-sm table-borderless small">
+                    <tr><th>Categoría</th><td>{{ experiencia.categoria.nombre }}</td></tr>
+                    <tr><th>Fecha y hora</th><td>{{ experiencia.fecha_hora|date:"d/m/Y H:i" }} hrs</td></tr>
+                    <tr><th>Guía</th><td>{{ experiencia.creador.get_full_name|default:experiencia.creador.username }}</td></tr>
+                    <tr><th>Valor del ticket</th><td>${{ experiencia.precio|intcomma }}</td></tr>
+                    <tr><th>Cupos disponibles</th><td>{{ experiencia.cupos_disponibles }}</td></tr>
+                </table>
+
+                {% if reserva %}
+                <div class="alert alert-info">Ya tienes una reserva para esta experiencia.</div>
+                <a href="{% url 'reserva_detalle' reserva.id %}" class="btn btn-info">Ver detalle del evento</a>
+                {% elif experiencia.ya_ocurrio %}
+                <div class="alert alert-secondary">Esta experiencia ya se realizó.</div>
+                {% elif experiencia.esta_llena %}
+                <div class="alert alert-danger">No quedan cupos disponibles.</div>
+                {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success"><i class="fas fa-check"></i> Confirmar reserva</button>
+                    <a href="{% url 'ruta_detalle' experiencia.id %}" class="btn btn-secondary">Volver</a>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

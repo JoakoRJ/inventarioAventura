@@ -1,0 +1,81 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Detalle del Grupo{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Detalle del Grupo</h1>
+    <a href="{% url 'experiencia_lista' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Volver</a>
+</div>
+
+<div class="row">
+    <div class="col-xl-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">{{ experiencia.titulo }}</h6></div>
+            <div class="card-body">
+                <p class="small">{{ experiencia.descripcion }}</p>
+                <ul class="list-unstyled small">
+                    <li><i class="fas fa-tag fa-fw"></i> {{ experiencia.categoria.nombre }}</li>
+                    <li><i class="fas fa-calendar-alt fa-fw"></i> {{ experiencia.fecha_hora|date:"d/m/Y H:i" }}</li>
+                    <li><i class="fas fa-dollar-sign fa-fw"></i> ${{ experiencia.precio|intcomma }}</li>
+                    <li><i class="fas fa-user fa-fw"></i> Guía: {{ experiencia.creador.username }}</li>
+                    <li><i class="fas fa-users fa-fw"></i> Inscritos: {{ experiencia.cupos_ocupados }} / {{ experiencia.cupo_maximo }}</li>
+                    <li><i class="fas fa-toggle-on fa-fw"></i> Ruta {% if experiencia.activa %}activa{% else %}inactiva{% endif %}</li>
+                </ul>
+                <form method="post" action="{% url 'experiencia_estado' experiencia.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="volver" value="grupo">
+                    <button type="submit" class="btn btn-sm btn-secondary">
+                        {% if experiencia.activa %}Desactivar ruta{% else %}Activar ruta{% endif %}
+                    </button>
+                </form>
+                <a href="{% url 'experiencia_editar' experiencia.id %}" class="btn btn-sm btn-warning">Editar</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-7 mb-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Registrar visitante</h6></div>
+            <div class="card-body">
+                {% if experiencia.ya_ocurrio %}
+                <p class="mb-0">La experiencia ya se realizó.</p>
+                {% elif experiencia.esta_llena %}
+                <p class="mb-0">El grupo está completo.</p>
+                {% else %}
+                <form method="post" action="{% url 'visitante_registro' experiencia.id %}" class="form-inline">
+                    {% csrf_token %}
+                    <div class="form-group mr-2">{{ form.turista }}</div>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-user-plus"></i> Registrar</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Visitantes inscritos</h6></div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered tabla" width="100%">
+                        <thead>
+                            <tr><th>Usuario</th><th>Nombre</th><th>Correo</th><th>Inscrito el</th><th>Pago</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for i in inscripciones %}
+                            <tr>
+                                <td>{{ i.usuario.username }}</td>
+                                <td>{{ i.usuario.get_full_name }}</td>
+                                <td>{{ i.usuario.email }}</td>
+                                <td data-order="{{ i.fecha_inscripcion|date:'Y-m-d H:i' }}">{{ i.fecha_inscripcion|date:"d/m/Y" }}</td>
+                                <td><span class="badge {% if i.estado_pago == 'confirmado' %}badge-success{% else %}badge-warning{% endif %}">{{ i.get_estado_pago_display }}</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

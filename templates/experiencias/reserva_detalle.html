@@ -1,0 +1,42 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Detalle del Evento{% endblock %}
+
+{% block contenido %}
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Detalle del Evento</h1>
+    <a href="{% url 'mis_reservas' %}" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Mis reservas</a>
+</div>
+
+<div class="row">
+    <div class="col-xl-7 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <span class="badge badge-success mr-2">{{ reserva.experiencia.categoria.nombre }}</span>
+                <h5 class="d-inline font-weight-bold text-gray-900">{{ reserva.experiencia.titulo }}</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ reserva.experiencia.descripcion }}</p>
+                <ul class="list-unstyled small mb-0">
+                    <li><i class="fas fa-calendar-alt fa-fw text-success"></i> {{ reserva.experiencia.fecha_hora|date:"d/m/Y H:i" }} hrs</li>
+                    <li><i class="fas fa-dollar-sign fa-fw text-success"></i> ${{ reserva.experiencia.precio|intcomma }} por persona</li>
+                    <li><i class="fas fa-user fa-fw text-success"></i> Guía: {{ reserva.experiencia.creador.get_full_name|default:reserva.experiencia.creador.username }}</li>
+                    <li><i class="fas fa-users fa-fw text-success"></i> Cupo máximo del grupo: {{ reserva.experiencia.cupo_maximo }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-5 mb-4">
+        <div class="card shadow h-100 border-left-success">
+            <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-success">Mi reserva</h6></div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless small">
+                    <tr><th>Reservada el</th><td>{{ reserva.fecha_inscripcion|date:"d/m/Y H:i" }}</td></tr>
+                    <tr><th>Estado de pago</th><td>{{ reserva.get_estado_pago_display }}</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

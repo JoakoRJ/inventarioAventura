@@ -1,0 +1,65 @@
+{% extends 'base_dashboard.html' %}
+{% load humanize %}
+
+{% block title %}Catálogo de Actividades{% endblock %}
+
+{% block contenido %}
+<h1 class="h3 mb-4 text-gray-800">Catálogo de Actividades</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-body py-3">
+        <span class="small font-weight-bold mr-2">Categoría:</span>
+        <a href="?categoria=" class="btn btn-sm {% if not categoria_id %}btn-success{% else %}btn-outline-success{% endif %}">Todas</a>
+        {% for c in categorias %}
+        <a href="?categoria={{ c.id }}" class="btn btn-sm {% if categoria_id == c.id %}btn-success{% else %}btn-outline-success{% endif %}">{{ c.nombre }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if recientes %}
+<div class="card shadow mb-4 border-left-info">
+    <div class="card-body py-3">
+        <span class="small font-weight-bold text-info mr-2">Vistas recientemente:</span>
+        {% for e in recientes %}
+        <a href="{% url 'ruta_detalle' e.id %}" class="badge badge-info p-2 mr-1">{{ e.titulo }}</a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="card shadow mb-4">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered tabla" width="100%">
+                <thead>
+                    <tr>
+                        <th>Experiencia</th>
+                        <th>Categoría</th>
+                        <th>Fecha y hora</th>
+                        <th>Guía</th>
+                        <th>Precio</th>
+                        <th>Cupos libres</th>
+                        <th class="sin-orden">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for e in experiencias %}
+                    <tr>
+                        <td>{{ e.titulo }}</td>
+                        <td>{{ e.categoria.nombre }}</td>
+                        <td data-order="{{ e.fecha_hora|date:'Y-m-d H:i' }}">{{ e.fecha_hora|date:"d/m/Y H:i" }}</td>
+                        <td>{{ e.creador.get_full_name|default:e.creador.username }}</td>
+                        <td data-order="{{ e.precio|stringformat:'d' }}">${{ e.precio|intcomma }}</td>
+                        <td>{% if e.esta_llena %}Completo{% else %}{{ e.cupos_disponibles }} de {{ e.cupo_maximo }}{% endif %}</td>
+                        <td>
+                            <a href="{% url 'ruta_detalle' e.id %}" class="btn btn-sm btn-success"><i class="fas fa-route"></i> Elegir ruta</a>
+                            {% if e.id in reservadas %}<span class="badge badge-info">Reservada</span>{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

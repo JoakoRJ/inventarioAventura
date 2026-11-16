@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Aventuras del Sur{% endblock %}</title>
+    <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/estilo.css' %}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+{% with ruta=request.resolver_match.url_name %}
+
+    <div id="wrapper">
+
+        <ul class="navbar-nav sidebar sidebar-dark accordion" id="accordionSidebar">
+
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'inicio' %}">
+                <div class="sidebar-brand-icon"><i class="fas fa-mountain"></i></div>
+                <div class="sidebar-brand-text mx-3">Aventuras del Sur</div>
+            </a>
+
+            <hr class="sidebar-divider my-0">
+
+            {% if request.session.rol == 'admin' %}
+            <li class="nav-item {% if ruta == 'panel_control' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'panel_control' %}"><i class="fas fa-fw fa-tachometer-alt"></i><span>Panel de Control</span></a>
+            </li>
+
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Personas</div>
+            <li class="nav-item {% if ruta == 'usuario_lista' or ruta == 'usuario_registro' or ruta == 'usuario_editar' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'usuario_lista' %}"><i class="fas fa-fw fa-users-cog"></i><span>Gestión de Usuarios</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'guia_lista' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'guia_lista' %}"><i class="fas fa-fw fa-binoculars"></i><span>Gestión de Guías</span></a>
+            </li>
+
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Rutas y actividades</div>
+            <li class="nav-item {% if ruta == 'categoria_lista' or ruta == 'categoria_registro' or ruta == 'categoria_editar' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'categoria_lista' %}"><i class="fas fa-fw fa-tags"></i><span>Categorías</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'experiencia_lista' or ruta == 'experiencia_registro' or ruta == 'experiencia_editar' or ruta == 'grupo_detalle' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'experiencia_lista' %}"><i class="fas fa-fw fa-route"></i><span>Experiencias</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'reserva_lista' or ruta == 'reserva_registro' or ruta == 'reserva_editar' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'reserva_lista' %}"><i class="fas fa-fw fa-ticket-alt"></i><span>Reservas</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'calendario' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'calendario' %}"><i class="fas fa-fw fa-calendar-alt"></i><span>Calendario</span></a>
+            </li>
+
+            <hr class="sidebar-divider">
+            <div class="sidebar-heading">Sistema</div>
+            <li class="nav-item {% if ruta == 'configuracion' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'configuracion' %}"><i class="fas fa-fw fa-cogs"></i><span>Configuración de Ecoparque</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'reportes' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'reportes' %}"><i class="fas fa-fw fa-chart-bar"></i><span>Reportes Globales</span></a>
+            </li>
+
+            {% elif request.session.rol == 'guia' %}
+            <div class="sidebar-heading mt-3">Guía ecoturístico</div>
+            <li class="nav-item {% if ruta == 'perfil' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'perfil' %}"><i class="fas fa-fw fa-user-circle"></i><span>Mi Perfil</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'calendario' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'calendario' %}"><i class="fas fa-fw fa-calendar-alt"></i><span>Calendario de Actividades</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'experiencia_lista' or ruta == 'experiencia_registro' or ruta == 'experiencia_editar' or ruta == 'grupo_detalle' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'experiencia_lista' %}"><i class="fas fa-fw fa-hiking"></i><span>Mis Tours Asignados</span></a>
+            </li>
+
+            {% elif request.session.rol == 'turista' %}
+            <div class="sidebar-heading mt-3">Turista</div>
+            <li class="nav-item {% if ruta == 'catalogo' or ruta == 'ruta_detalle' or ruta == 'reserva_nueva' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'catalogo' %}"><i class="fas fa-fw fa-list"></i><span>Catálogo de Actividades</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'mis_reservas' or ruta == 'reserva_detalle' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'mis_reservas' %}"><i class="fas fa-fw fa-ticket-alt"></i><span>Mis Reservas</span></a>
+            </li>
+            <li class="nav-item {% if ruta == 'perfil' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'perfil' %}"><i class="fas fa-fw fa-user-circle"></i><span>Mi Perfil</span></a>
+            </li>
+            {% endif %}
+
+            <hr class="sidebar-divider d-none d-md-block">
+
+            <div class="text-center d-none d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+        </ul>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <div id="content">
+
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown no-arrow">
+                            <a class="nav-link dropdown-toggle" href="#" id="menuUsuario" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="mr-2 d-none d-lg-inline text-gray-700 small">{{ user.get_full_name|default:user.username }}</span>
+                                <span class="chip-rol">{{ request.session.rol }}</span>
+                                <i class="fas fa-user-circle fa-lg ml-2 text-success"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="menuUsuario">
+                                <a class="dropdown-item" href="{% url 'perfil' %}"><i class="fas fa-id-card fa-sm fa-fw mr-2 text-gray-500"></i>Mi Perfil</a>
+                                <div class="dropdown-divider"></div>
+                                <form action="{% url 'logout' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-500"></i>Cerrar sesión</button>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="container-fluid contenido">
+
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}" role="alert">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% block contenido %}
+                    {% endblock %}
+
+                </div>
+            </div>
+
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Ecoparque y Reserva Natural Aventuras del Sur</span>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+    </div>
+
+{% endwith %}
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('.tabla').DataTable({
+                language: {
+                    emptyTable: 'No hay datos disponibles',
+                    info: 'Mostrando _START_ a _END_ de _TOTAL_ registros',
+                    infoEmpty: 'Mostrando 0 a 0 de 0 registros',
+                    infoFiltered: '(filtrado de _MAX_ registros en total)',
+                    lengthMenu: 'Mostrar _MENU_ registros',
+                    search: 'Buscar:',
+                    zeroRecords: 'No se encontraron resultados',
+                    paginate: { first: 'Primero', last: 'Último', next: 'Siguiente', previous: 'Anterior' }
+                },
+                order: [],
+                columnDefs: [{ orderable: false, targets: 'sin-orden' }]
+            });
+        });
+    </script>
+
+</body>
+
+</html>
